@@ -1,10 +1,14 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 const navItems = [
+  {name: "Practitioner Dashbord", to: "/doctor-dashboard", icon: "🧑‍⚕️"},
+  {name: "Patient Dashbord", to: "/patient-dashboard", icon: "🧑"},
+  {name: "Admin Dashboard", to: "/admindashboard", icon: "🧑‍💼"},
   { name: "Dashboard", to: "/dashboard", icon: "🏠" },
   { name: "Therapy Scheduling", to: "/therapy-scheduling", icon: "📅" },
   { name: "Notifications", to: "/notifications", icon: "🔔" },
   { name: "Feedback", to: "/feedback", icon: "📝" },
+  
 ];
 const Sidebar: React.FC = () => {
   return (

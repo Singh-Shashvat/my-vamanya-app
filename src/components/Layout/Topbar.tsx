@@ -4,7 +4,7 @@ const Topbar: React.FC = () => {
     <header className="bg-white border-b border-gray-200 h-16 flex items-center px-4 justify-between sticky top-0 z-10">
       <div className="text-lg font-semibold text-gray-800">Panchakarma Management</div>
       <div className="flex items-center gap-4">
-        {/* Placeholder for user avatar or settings */}
+       
         <button
           aria-label="User menu"
           className="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold"

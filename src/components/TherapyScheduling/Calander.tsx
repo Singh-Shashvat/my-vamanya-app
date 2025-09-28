@@ -20,7 +20,7 @@ const Calendar: React.FC<CalendarProps> = ({ sessions, onDateClick, selectedDate
   while (day <= endDate) {
     for (let i = 0; i < 7; i++) {
       formattedDate = format(day, dateFormat);
-      const cloneDay = day;
+      const cloneDay = new Date(day);
       const daySessions = sessions.filter(
         (s) => s.date === format(cloneDay, "yyyy-MM-dd")
       );
