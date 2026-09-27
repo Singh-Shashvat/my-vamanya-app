@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, format, isSameMonth, isSameDay, parseISO } from "date-fns";
+import { startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, format, isSameMonth, isSameDay } from "date-fns";
 import { Session } from "../../types";
 interface CalendarProps {
   sessions: Session[];

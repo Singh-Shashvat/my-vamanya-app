@@ -1,31 +1,21 @@
-// src/pages/TherapySchedulingPage.tsx
 import React, { useState } from "react";
 import Calendar from "../components/TherapyScheduling/Calander";
 import SessionList from "../components/TherapyScheduling/SessionList";
 import SessionForm from "../components/TherapyScheduling/SessionForm";
-import { Session } from "../types";
-import { v4 as uuidv4 } from "uuid";
+import { Session } from "../types.d";
+import { usePanchakarma } from "../context/PanchakarmaContext";
+import { format } from "date-fns";
+import { GiLotus } from "react-icons/gi";
 
 const TherapySchedulingPage: React.FC = () => {
-  // Sessions state (in real app, fetch from API)
-  const [sessions, setSessions] = useState<Session[]>([
-    {
-      id: "1",
-      therapyType: "Abhyanga Massage",
-      patientName: "Ravi Kumar",
-      practitionerName: "Dr. Meena",
-      date: new Date().toISOString().slice(0, 10),
-      time: "10:00",
-      progress: 40,
-    },
-  ]);
+  const { sessions, addSession, updateSession, deleteSession } = usePanchakarma();
 
   const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().slice(0, 10));
   const [editingSession, setEditingSession] = useState<Session | null>(null);
   const [showForm, setShowForm] = useState(false);
 
   const handleDateClick = (date: Date) => {
-    setSelectedDate(date.toISOString().slice(0, 10));
+    setSelectedDate(format(date, "yyyy-MM-dd"));
     setEditingSession(null);
     setShowForm(false);
   };
@@ -41,25 +31,20 @@ const TherapySchedulingPage: React.FC = () => {
   };
 
   const handleDelete = (id: string) => {
-    setSessions((prev) => prev.filter((s) => s.id !== id));
+    deleteSession(id);
   };
 
   const handleSave = (sessionData: Omit<Session, "id" | "progress">) => {
     if (editingSession) {
-      // Update existing
-      setSessions((prev) =>
-        prev.map((s) =>
-          s.id === editingSession.id ? { ...s, ...sessionData } : s
-        )
-      );
+      updateSession({
+        ...editingSession,
+        ...sessionData,
+      });
     } else {
-      // Add new
-      const newSession: Session = {
-        id: uuidv4(),
+      addSession({
         progress: 0,
         ...sessionData,
-      };
-      setSessions((prev) => [...prev, newSession]);
+      });
     }
     setShowForm(false);
     setEditingSession(null);
@@ -72,40 +57,67 @@ const TherapySchedulingPage: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-gray-900">Therapy Scheduling</h1>
+      {/* Title Bar */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl shadow-xs border border-gray-200">
+        <div>
+          <div className="flex items-center gap-2">
+            <GiLotus className="w-5 h-5 text-emerald-600" />
+            <h1 className="text-xl font-bold text-gray-900">Therapy Scheduling & Resource Allocation</h1>
+          </div>
+          <p className="text-xs text-gray-500 mt-0.5">
+            Automated slot reservation for Vamana, Virechana, Shirodhara, and Basti suites.
+          </p>
+        </div>
+
+        <button
+          onClick={handleAddNew}
+          className="px-4 py-2 rounded-xl bg-emerald-600 text-white hover:bg-emerald-700 text-xs font-semibold shadow-xs flex items-center gap-2 self-start sm:self-auto transition"
+        >
+          <span>+ Schedule Therapy Session</span>
+        </button>
+      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <Calendar sessions={sessions} onDateClick={handleDateClick} selectedDate={selectedDate ? new Date(selectedDate) : null} />
+        {/* Calendar View */}
+        <div className="bg-white rounded-2xl shadow-xs border border-gray-200 p-4">
+          <Calendar
+            sessions={sessions}
+            onDateClick={handleDateClick}
+            selectedDate={selectedDate ? new Date(selectedDate) : null}
+          />
+          <div className="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between text-[11px] text-gray-500">
+            <span className="flex items-center gap-1.5">
+              <span className="w-2.5 h-2.5 rounded-full bg-indigo-600"></span>
+              Has Scheduled Procedure
+            </span>
+            <span>Total: {sessions.length} Sessions</span>
+          </div>
+        </div>
 
+        {/* Sessions on Selected Date */}
         <div className="lg:col-span-2 flex flex-col">
-          <button
-            onClick={handleAddNew}
-            className="self-start mb-4 px-4 py-2 rounded-md bg-indigo-600 text-white hover:bg-indigo-700"
-          >
-            + New Session
-          </button>
-
           <SessionList
             sessions={sessions}
             onEdit={handleEdit}
             onDelete={handleDelete}
             selectedDate={selectedDate}
           />
-
-          {showForm && (
-            <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center p-4 z-50">
-              <div className="bg-white rounded-lg shadow-lg max-w-md w-full">
-                <SessionForm
-                  session={editingSession ?? undefined}
-                  onSave={handleSave}
-                  onCancel={handleCancel}
-                  date={selectedDate}
-                />
-              </div>
-            </div>
-          )}
         </div>
       </div>
+
+      {/* Modal Dialog for Session Form */}
+      {showForm && (
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4 z-50 animate-in fade-in">
+          <div className="max-w-xl w-full">
+            <SessionForm
+              session={editingSession ?? undefined}
+              onSave={handleSave}
+              onCancel={handleCancel}
+              date={selectedDate}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

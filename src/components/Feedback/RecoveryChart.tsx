@@ -46,7 +46,7 @@ const RecoveryChart: React.FC<RecoveryChartProps> = ({ dataPoints }) => {
       y: {
         min: 0,
         max: 100,
-        ticks: { stepSize: 20, callback: (val: number) => `${val}%` },
+        ticks: { stepSize: 20, callback: (val: number | string) => `${val}%` },
       },
     },
   };

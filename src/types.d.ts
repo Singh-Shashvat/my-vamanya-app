@@ -3,10 +3,15 @@ export interface Session {
   therapyType: string;
   patientName: string;
   practitionerName: string;
-  date: string; // ISO string
+  date: string; // yyyy-MM-dd
   time: string; // e.g. "14:00"
   progress: number; // 0-100
+  stage?: "Purvakarma" | "Pradhanakarma" | "Paschatkarma";
+  status?: "Scheduled" | "In-Progress" | "Completed" | "Cancelled";
+  room?: string;
+  notes?: string;
 }
+
 export interface Notification {
   id: string;
   message: string;
@@ -14,23 +19,28 @@ export interface Notification {
   channel: "in-app" | "sms" | "email";
   status: "sent" | "pending" | "failed";
   type: "pre-procedure" | "post-procedure";
+  patientName?: string;
 }
+
 export interface Feedback {
   id: string;
-  sessionId: string;
+  sessionId?: string;
+  patientName: string;
   symptoms: string;
   severity: "Mild" | "Moderate" | "Severe";
   comments: string;
   date: string; // ISO string
+  progress: number; // 0-100
 }
-
-// src/types.ts (additions)
 
 export interface Doctor {
   id: string;
   name: string;
   specialty: string;
+  qualification: string;
+  experience: string;
   patients: string[]; // array of patient IDs
+  avatar?: string;
 }
 
 export interface Appointment {
@@ -39,10 +49,10 @@ export interface Appointment {
   doctorId: string;
   date: string; // yyyy-MM-dd
   time: string; // HH:mm
-  sessionId?: string; // optional link to session
+  sessionId?: string;
+  therapyType?: string;
+  status?: "Upcoming" | "Completed" | "Cancelled";
 }
-
-// src/types.ts (additions)
 
 export interface Patient {
   id: string;
@@ -50,6 +60,10 @@ export interface Patient {
   age: number;
   gender: string;
   doctorId: string;
+  prakriti?: "Vata" | "Pitta" | "Kapha" | "Vata-Pitta" | "Pitta-Vata" | "Pitta-Kapha" | "Vata-Kapha" | "Tridoshic";
+  condition?: string;
+  activeTherapy?: string;
+  admitDate?: string;
 }
 
 export interface patientAppointment {
@@ -59,4 +73,16 @@ export interface patientAppointment {
   date: string; // yyyy-MM-dd
   time: string; // HH:mm
   sessionId?: string;
+  therapyType?: string;
+  status?: "Upcoming" | "Completed" | "Cancelled";
+}
+
+export interface PractitionerApproval {
+  id: number;
+  name: string;
+  specialty: string;
+  email: string;
+  experience: string;
+  status: "Pending" | "Verified" | "Rejected";
+  registrationNo: string;
 }
